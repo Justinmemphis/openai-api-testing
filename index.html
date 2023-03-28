@@ -1,42 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>OpenAI API Form</title>
+    <title>OpenAI Demo</title>
   </head>
   <body>
-    <h1>OpenAI API Form</h1>
-    <form id="openai-form">
-      <label for="prompt">Prompt:</label><br>
+    <h1>OpenAI Demo</h1>
+    <form action="/submit" method="get">
+      <label for="prompt">Enter a prompt:</label><br>
       <input type="text" id="prompt" name="prompt"><br>
-      <button type="submit">Submit</button>
+      <br>
+      <input type="submit" value="Submit">
     </form>
-    <div id="result"></div>
-    <script>
-      const form = document.getElementById('openai-form');
-      const resultDiv = document.getElementById('result');
-
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const prompt = document.getElementById('prompt').value;
-
-        try {
-          const response = await fetch('/openai', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ prompt })
-          });
-
-          const { response: result } = await response.json();
-          resultDiv.textContent = result;
-        } catch (error) {
-          console.error(error);
-          resultDiv.textContent = 'An error occurred. Please try again later.';
-        }
-      });
-    </script>
   </body>
 </html>
 
