@@ -1,40 +1,44 @@
 const express = require('express');
-const openai = require('openai');
+const openAI = require('openai');
+// const { Configuration, OpenAIApi } = require('openai');
+
+require('dotenv').config();
+
+const bp = require('body-parser');
 
 const app = express();
 const port = 3000;
 
-// Set up OpenAI API credentials
-openai.apiKey = 'process.env.OPENAI_API_KEY';
+app.use(bp.json());
+app.use(bp.urlencoded({ extended: true }));
+
+const { Configuration, OpenAIApi } = require('openai');
+const configuration = new Configuration({
+	apiKey: process.env.OPENAI_API_KEY
+});
+const openai = new OpenAIApi(configuration);
 
 // Serve the HTML file when the root URL is requested
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-// Handle form submission
 app.get('/submit', (req, res) => {
-  const prompt = req.query.prompt;
+	const prompt = req.query.prompt;
 
-  // Call the OpenAI API with the prompt
-  openai.completion.create({
-    engine: 'text-davinci-002',
-    prompt: prompt,
-    maxTokens: 100,
-    n: 1,
-    stop: ['\n']
-  })
-  .then(response => {
-    const text = response.data.choices[0].text;
-
-    // Display the result to the user
-    res.send(text);
-  })
-  .catch(error => {
-    console.log(error);
-    res.send('An error occurred');
-  });
+	openai.createCompletion({
+		model: "text-davinci-003",
+		prompt: prompt,
+		temperature: 0.4,
+		max_tokens: 150,
+		frequency_penalty: 0,
+		presence_penalty: 0.6
+	})
+	.then((response) => {
+		res.send(response.data.choices);
+	});
 });
+
 
 // Start the server
 app.listen(port, () => {
